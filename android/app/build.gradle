@@ -2,7 +2,7 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-// RN 0.74.5 — paths hardcoded to avoid runtime node execution in Gradle
+// RN 0.74.5 — all paths hardcoded, no runtime node execution
 react {
     entryFile = file("../../node_modules/expo/AppEntry.js")
     reactNativeDir = file("../../node_modules/react-native")
@@ -89,6 +89,6 @@ dependencies {
     }
 }
 
-// RN 0.74.x uses old autolinking approach
+// RN 0.74.x autolinking
 apply from: "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"
 applyNativeModulesAppBuildGradle(project)
