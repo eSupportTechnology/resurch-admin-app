@@ -4,11 +4,11 @@ apply plugin: "com.facebook.react"
 
 // RN 0.74.5 — paths hardcoded to avoid runtime node execution in Gradle
 react {
-    entryFile = file("../node_modules/expo/AppEntry.js")
-    reactNativeDir = file("../node_modules/react-native")
-    hermesCommand = "../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"
-    codegenDir = file("../node_modules/@react-native/codegen")
-    cliFile = file("../node_modules/@expo/cli/build/bin/cli")
+    entryFile = file("../../node_modules/expo/AppEntry.js")
+    reactNativeDir = file("../../node_modules/react-native")
+    hermesCommand = "../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"
+    codegenDir = file("../../node_modules/@react-native/codegen")
+    cliFile = file("../../node_modules/@expo/cli/build/bin/cli")
     bundleCommand = "export:embed"
     nodeExecutableAndArgs = [project.hasProperty("nodeExecutable") ? project.nodeExecutable : "node"]
 }
@@ -90,5 +90,5 @@ dependencies {
 }
 
 // RN 0.74.x uses old autolinking approach
-apply from: "../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"
+apply from: "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"
 applyNativeModulesAppBuildGradle(project)
