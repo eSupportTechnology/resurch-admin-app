@@ -31,10 +31,11 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Verify node path
+      - name: Inject node path into gradle.properties
         run: |
-          echo "Node path: $(which node)"
-          echo "Node version: $(node --version)"
+          NODE_PATH=$(which node)
+          echo "Node binary: $NODE_PATH"
+          echo "nodeExecutable=$NODE_PATH" >> android/gradle.properties
 
       - name: Make Gradlew executable
         run: chmod +x android/gradlew
@@ -42,11 +43,9 @@ jobs:
       - name: Build APK (debug)
         run: |
           cd android
-          ./gradlew assembleDebug --no-daemon --info 2>&1 | grep -E "(FAILURE|error:|Error|path)" | head -30 || true
           ./gradlew assembleDebug --no-daemon
         env:
           GRADLE_OPTS: -Dorg.gradle.jvmargs=-Xmx4g
-          PATH: /usr/local/bin:/usr/bin:/bin:${{ env.PATH }}
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4

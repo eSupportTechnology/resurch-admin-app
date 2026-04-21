@@ -4,25 +4,14 @@ apply plugin: "com.facebook.react"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
 
-// Resolve node executable - supports CI environments where node may not be on PATH
-static def getNodeExecutable() {
-    def candidates = ["node", "/usr/local/bin/node", "/usr/bin/node", "/opt/homebrew/bin/node"]
-    for (candidate in candidates) {
-        try {
-            def result = [candidate, "--version"].execute()
-            result.waitFor()
-            if (result.exitValue() == 0) return candidate
-        } catch (ignored) {}
-    }
-    return "node"
-}
+// NODE_EXEC is injected by CI via gradle.properties or falls back to "node"
+def nodeExec = project.hasProperty("nodeExecutable") ? project.nodeExecutable : "node"
 
 static def versionToNumber(major, minor, patch) {
   return patch * 100 + minor * 10000 + major * 1000000
 }
 
 def getRNVersion() {
-  def nodeExec = getNodeExecutable()
   def version = providers.exec {
     workingDir(projectDir)
     commandLine(nodeExec, "-e", "console.log(require('react-native/package.json').version);")
@@ -44,7 +33,6 @@ def rnVersion = getRNVersion()
  * By default you don't need to apply any configuration, just uncomment the lines you need.
  */
 react {
-    def nodeExec = getNodeExecutable()
     entryFile = file([nodeExec, "-e", "require('expo/scripts/resolveAppEntry')", projectRoot, "android", "absolute"].execute(null, rootDir).text.trim())
     reactNativeDir = new File([nodeExec, "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsoluteFile()
     hermesCommand = new File([nodeExec, "--print", "require.resolve('react-native/package.json')"].execute(null, rootDir).text.trim()).getParentFile().getAbsolutePath() + "/sdks/hermesc/%OS-BIN%/hermesc"
@@ -211,7 +199,6 @@ dependencies {
 }
 
 if (rnVersion < versionToNumber(0, 75, 0)) {
-    def nodeExec = getNodeExecutable()
     apply from: new File([nodeExec, "--print", "require.resolve('@react-native-community/cli-platform-android/package.json', { paths: [require.resolve('react-native/package.json')] })"].execute(null, rootDir).text.trim(), "../native_modules.gradle");
     applyNativeModulesAppBuildGradle(project)
 }
