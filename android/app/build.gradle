@@ -2,15 +2,11 @@ apply plugin: "com.android.application"
 apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
-// RN 0.74.5 — all paths hardcoded, no runtime node execution
+// RN 0.76 + Expo SDK 52
 react {
-    entryFile = file("../../node_modules/expo/AppEntry.js")
-    reactNativeDir = file("../../node_modules/react-native")
-    hermesCommand = "../../node_modules/react-native/sdks/hermesc/%OS-BIN%/hermesc"
-    codegenDir = file("../../node_modules/@react-native/codegen")
-    cliFile = file("../../node_modules/@expo/cli/build/bin/cli")
+    entryFile = file(["node", "--print", "require.resolve('expo/AppEntry.js')"].execute(null, rootDir).text.trim())
+    cliFile = file(["node", "--print", "require.resolve('@expo/cli/build/bin/cli')"].execute(null, rootDir).text.trim())
     bundleCommand = "export:embed"
-    nodeExecutableAndArgs = [project.hasProperty("nodeExecutable") ? project.nodeExecutable : "node"]
 }
 
 def enableProguardInReleaseBuilds = (findProperty('android.enableProguardInReleaseBuilds') ?: false).toBoolean()
