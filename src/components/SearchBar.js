@@ -31,6 +31,7 @@ const styles = StyleSheet.create({
   input: {
     fontSize: 14,
     color: "#101828",
-    fontFamily: "System",
+    height: 40,
+    padding: 0,
   },
 });

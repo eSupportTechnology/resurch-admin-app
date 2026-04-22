@@ -63,7 +63,7 @@ function AdminTabs() {
             {TAB_LABELS[route.name]}
           </Text>
         ),
-        tabBarActiveTintColor: "#465fff",
+        tabBarActiveTintColor: "#E32227",
         tabBarInactiveTintColor: "#98a2b3",
         tabBarStyle: navStyles.tabBar,
         tabBarItemStyle: navStyles.tabBarItem,
@@ -112,7 +112,7 @@ export default function AppNavigator() {
   if (loading) {
     return (
       <View style={{ flex: 1, backgroundColor: "#f2f4f7", alignItems: "center", justifyContent: "center" }}>
-        <Text style={{ fontSize: 16, color: "#465fff", fontWeight: "700" }}>Loading...</Text>
+        <Text style={{ fontSize: 16, color: "#E32227", fontWeight: "700" }}>Loading...</Text>
       </View>
     );
   }
@@ -143,7 +143,7 @@ const navStyles = StyleSheet.create({
   headerLeft: { paddingLeft: 4 },
   headerBadge: {
     width: 32, height: 32, borderRadius: 16,
-    backgroundColor: "#465fff", alignItems: "center", justifyContent: "center",
+    backgroundColor: "#E32227", alignItems: "center", justifyContent: "center",
   },
   headerBadgeText: { fontSize: 12, fontWeight: "700", color: "#fff" },
   logoutBtn: {
@@ -161,5 +161,5 @@ const navStyles = StyleSheet.create({
   },
   tabBarItem: { paddingVertical: 4 },
   tabLabel: { fontSize: 10, fontWeight: "600", color: "#98a2b3", marginTop: 2 },
-  tabLabelActive: { color: "#465fff" },
+  tabLabelActive: { color: "#E32227" },
 });

@@ -10,6 +10,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Alert,
+  Image,
 } from "react-native";
 import { useAuth } from "../context/AuthContext";
 
@@ -57,10 +58,12 @@ export default function LoginScreen() {
       >
         {/* Header */}
         <View style={styles.header}>
-          <View style={styles.logoBox}>
-            <Text style={styles.logoText}>RC</Text>
-          </View>
-          <Text style={styles.title}>Research Connect</Text>
+          <Image
+            source={require("../../assets/icon.png")}
+            style={styles.logo}
+            resizeMode="contain"
+          />
+          <Text style={styles.title}>innlaunch</Text>
           <Text style={styles.subtitle}>Admin Panel</Text>
         </View>
 
@@ -140,7 +143,7 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1, backgroundColor: "#f2f4f7" },
+  flex: { flex: 1, backgroundColor: "#fff" },
   container: {
     flexGrow: 1,
     justifyContent: "center",
@@ -148,21 +151,11 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
   header: { alignItems: "center", marginBottom: 32 },
-  logoBox: {
-    width: 68,
-    height: 68,
-    borderRadius: 20,
-    backgroundColor: "#465fff",
-    alignItems: "center",
-    justifyContent: "center",
+  logo: {
+    width: 150,
+    height: 60,
     marginBottom: 16,
-    shadowColor: "#465fff",
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.35,
-    shadowRadius: 12,
-    elevation: 10,
   },
-  logoText: { color: "#fff", fontSize: 26, fontWeight: "800", letterSpacing: 1 },
   title: { fontSize: 22, fontWeight: "700", color: "#101828", letterSpacing: -0.3 },
   subtitle: { fontSize: 13, color: "#667085", marginTop: 4 },
   card: {
@@ -188,6 +181,7 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     fontSize: 14,
     color: "#101828",
+    minHeight: 48,
   },
   inputError: { borderColor: "#f04438" },
   passwordRow: { position: "relative" },
@@ -199,15 +193,15 @@ const styles = StyleSheet.create({
     bottom: 0,
     justifyContent: "center",
   },
-  eyeText: { fontSize: 12, fontWeight: "600", color: "#465fff" },
+  eyeText: { fontSize: 12, fontWeight: "600", color: "#E32227" },
   errorText: { fontSize: 12, color: "#f04438", marginTop: 4 },
   submitBtn: {
-    backgroundColor: "#465fff",
+    backgroundColor: "#E32227",
     borderRadius: 12,
     paddingVertical: 14,
     alignItems: "center",
     marginTop: 8,
-    shadowColor: "#465fff",
+    shadowColor: "#E32227",
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
@@ -217,10 +211,10 @@ const styles = StyleSheet.create({
   submitBtnText: { color: "#fff", fontSize: 15, fontWeight: "700", letterSpacing: 0.3 },
   footer: { alignItems: "center", marginTop: 32 },
   securityBadge: {
-    backgroundColor: "#ecf3ff",
+    backgroundColor: "#fef2f2",
     paddingHorizontal: 16,
     paddingVertical: 8,
     borderRadius: 20,
   },
-  securityText: { fontSize: 12, color: "#465fff", fontWeight: "600" },
+  securityText: { fontSize: 12, color: "#E32227", fontWeight: "600" },
 });

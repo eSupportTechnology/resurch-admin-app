@@ -186,20 +186,20 @@ export default function InnovationReviewScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color="#465fff" size="large" />
+          <ActivityIndicator color="#E32227" size="large" />
         </View>
       ) : (
         <FlatList
           data={comments}
           keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => <ReviewCard item={item} onDelete={handleDelete} />}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#465fff" />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#E32227" />}
           contentContainerStyle={[styles.list, !comments.length && styles.emptyList]}
           showsVerticalScrollIndicator={false}
           onEndReached={handleLoadMore}
           onEndReachedThreshold={0.4}
           ListFooterComponent={
-            loadingMore ? <ActivityIndicator color="#465fff" style={{ paddingVertical: 16 }} /> : null
+            loadingMore ? <ActivityIndicator color="#E32227" style={{ paddingVertical: 16 }} /> : null
           }
           ListEmptyComponent={
             <View style={styles.empty}>
@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
   searchInput: {
     backgroundColor: "#f9fafb", borderWidth: 1, borderColor: "#e4e7ec",
     borderRadius: 10, paddingHorizontal: 14, paddingVertical: 10,
-    fontSize: 14, color: "#101828",
+    fontSize: 14, color: "#101828", minHeight: 48,
   },
   list: { padding: 16 },
   emptyList: { flexGrow: 1 },
@@ -232,9 +232,9 @@ const styles = StyleSheet.create({
   cardHeader: { flexDirection: "row", alignItems: "center", marginBottom: 10 },
   avatar: {
     width: 38, height: 38, borderRadius: 19,
-    backgroundColor: "#ecf3ff", alignItems: "center", justifyContent: "center", marginRight: 10,
+    backgroundColor: "#fef2f2", alignItems: "center", justifyContent: "center", marginRight: 10,
   },
-  avatarText: { fontSize: 16, fontWeight: "700", color: "#465fff" },
+  avatarText: { fontSize: 16, fontWeight: "700", color: "#E32227" },
   userInfo: { flex: 1 },
   userName: { fontSize: 14, fontWeight: "700", color: "#101828" },
   userEmail: { fontSize: 11, color: "#98a2b3", marginTop: 1 },
@@ -262,5 +262,5 @@ const styles = StyleSheet.create({
   successText: { fontSize: 13, color: "#065f46", fontWeight: "600" },
   errorBox: { margin: 16, marginBottom: 0, padding: 14, backgroundColor: "#fee2e2", borderRadius: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   errorText: { fontSize: 13, color: "#991b1b", flex: 1 },
-  retryText: { fontSize: 13, fontWeight: "700", color: "#465fff", marginLeft: 8 },
+  retryText: { fontSize: 13, fontWeight: "700", color: "#E32227", marginLeft: 8 },
 });

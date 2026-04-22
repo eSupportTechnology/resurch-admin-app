@@ -244,14 +244,14 @@ export default function VideoValidationScreen() {
 
       {loading ? (
         <View style={styles.center}>
-          <ActivityIndicator color="#465fff" size="large" />
+          <ActivityIndicator color="#E32227" size="large" />
         </View>
       ) : (
         <FlatList
           data={filtered}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderVideo}
-          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#465fff" />}
+          refreshControl={<RefreshControl refreshing={refreshing} onRefresh={handleRefresh} tintColor="#E32227" />}
           contentContainerStyle={[styles.list, !filtered.length && styles.emptyList]}
           showsVerticalScrollIndicator={false}
           ListEmptyComponent={
@@ -285,7 +285,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#f2f4f7",
     marginRight: 8,
   },
-  filterTabActive: { backgroundColor: "#465fff" },
+  filterTabActive: { backgroundColor: "#E32227" },
   filterTabText: { fontSize: 13, fontWeight: "600", color: "#667085" },
   filterTabTextActive: { color: "#fff" },
   searchWrapper: { paddingHorizontal: 16, paddingTop: 12, paddingBottom: 4 },
@@ -298,6 +298,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     fontSize: 14,
     color: "#101828",
+    minHeight: 48,
   },
   list: { padding: 16, gap: 12 },
   emptyList: { flexGrow: 1 },
@@ -331,7 +332,7 @@ const styles = StyleSheet.create({
   emptySubtitle: { fontSize: 13, color: "#667085", marginTop: 4 },
   errorBox: { margin: 16, padding: 14, backgroundColor: "#fee2e2", borderRadius: 10, flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   errorText: { fontSize: 13, color: "#991b1b", flex: 1 },
-  retryText: { fontSize: 13, fontWeight: "700", color: "#465fff", marginLeft: 8 },
+  retryText: { fontSize: 13, fontWeight: "700", color: "#E32227", marginLeft: 8 },
 });
 
 const modal = StyleSheet.create({
