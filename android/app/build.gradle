@@ -89,6 +89,4 @@ dependencies {
     }
 }
 
-// RN 0.74.x autolinking
-apply from: "../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"
-applyNativeModulesAppBuildGradle(project)
+// Autolinking handled by settings.gradle useExpoModules()
