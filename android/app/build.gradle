@@ -65,6 +65,10 @@ android {
 dependencies {
     implementation("com.facebook.react:react-android")
 
+    // Expo modules - added via autolinking but explicitly included for compilation
+    implementation(project(":expo"))
+    implementation(project(":expo-modules-core"))
+
     def isGifEnabled = (findProperty('expo.gif.enabled') ?: "") == "true"
     def isWebpEnabled = (findProperty('expo.webp.enabled') ?: "") == "true"
     def isWebpAnimatedEnabled = (findProperty('expo.webp.animated') ?: "") == "true"
