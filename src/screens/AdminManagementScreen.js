@@ -113,8 +113,8 @@ export default function AdminManagementScreen() {
   const load = useCallback(async () => {
     try {
       const res = await usersApi.list({ search, per_page: 100 });
-      const list = res.data?.data?.data || res.data?.data || [];
-      setAdmins(list.filter((u) => ADMIN_ROLES.includes(u.role)));
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data?.data || res.data?.data || []);
+      setAdmins(list.filter((u) => u.role && ADMIN_ROLES.map(r => r.toLowerCase()).includes(u.role.toLowerCase())));
     } catch (e) {
       console.warn(e);
     } finally {
