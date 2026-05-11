@@ -58,17 +58,10 @@ function FormModal({ visible, onClose, onSave, admin }) {
   const submit = async () => {
     setSaving(true);
     try {
-      console.log('Saving form data:', JSON.stringify(form, null, 2));
       await onSave(form);
       onClose();
     } catch (e) {
-      console.error('Save failed error:', e);
-      if (e.response) {
-        console.error('Save error response data:', JSON.stringify(e.response.data, null, 2));
-        console.error('Save error response status:', e.response.status);
-      }
       Alert.alert("Error", e.response?.data?.message || "Save failed");
-      console.log("Save failed", e.response?.data?.message || "Save failed");
     } finally {
       setSaving(false);
     }
