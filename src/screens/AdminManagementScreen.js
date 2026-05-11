@@ -38,7 +38,7 @@ function AdminCard({ admin, onToggle, onEdit, onDelete }) {
 }
 
 function FormModal({ visible, onClose, onSave, admin }) {
-  const [form, setForm] = useState({ first_name: "", last_name: "", email: "", role: "Admin", password: "" });
+  const [form, setForm] = useState({ first_name: "", last_name: "", email: "", role: "admin", password: "" });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -47,21 +47,28 @@ function FormModal({ visible, onClose, onSave, admin }) {
         first_name: admin.first_name || "",
         last_name: admin.last_name || "",
         email: admin.email || "",
-        role: admin.role || "Admin",
+        role: admin.role || "admin",
         password: "",
       });
     } else {
-      setForm({ first_name: "", last_name: "", email: "", role: "Admin", password: "" });
+      setForm({ first_name: "", last_name: "", email: "", role: "admin", password: "" });
     }
   }, [admin, visible]);
 
   const submit = async () => {
     setSaving(true);
     try {
+      console.log('Saving form data:', JSON.stringify(form, null, 2));
       await onSave(form);
       onClose();
     } catch (e) {
+      console.error('Save failed error:', e);
+      if (e.response) {
+        console.error('Save error response data:', JSON.stringify(e.response.data, null, 2));
+        console.error('Save error response status:', e.response.status);
+      }
       Alert.alert("Error", e.response?.data?.message || "Save failed");
+      console.log("Save failed", e.response?.data?.message || "Save failed");
     } finally {
       setSaving(false);
     }
@@ -87,9 +94,9 @@ function FormModal({ visible, onClose, onSave, admin }) {
         value={form.role}
         onValueChange={(v) => setForm({ ...form, role: v })}
         options={[
-          { label: "Admin", value: "Admin" },
-          { label: "Manager", value: "Manager" },
-          { label: "Marketing", value: "Marketing" },
+          { label: "Admin", value: "admin" },
+          { label: "Manager", value: "manager" },
+          { label: "Marketing", value: "marketing" },
         ]}
       />
       <Input
