@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from "react";
-import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Image } from "react-native";
 import { Screen, Card, Button, Badge, EmptyState } from "../components/ui";
 import { leaderboardApi } from "../api/endpoints";
 import { colors, spacing } from "../theme/colors";
@@ -18,9 +18,12 @@ export default function LeaderboardScreen() {
   const load = useCallback(async () => {
     try {
       const res = await leaderboardApi.byContribution(type);
-      setItems(res.data?.data || res.data || []);
+      
+      // Fix: Extract data array from paginated response
+      const data = res.data?.data?.data || res.data?.data || res.data || [];
+      setItems(data);
     } catch (e) {
-      console.warn(e);
+      console.warn("Leaderboard fetch error:", e);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -60,30 +63,38 @@ export default function LeaderboardScreen() {
         <FlatList
           data={items}
           keyExtractor={(u) => String(u.id)}
-          renderItem={({ item, index }) => (
-            <Card>
-              <View style={styles.row}>
-                <Text style={styles.rank}>#{index + 1}</Text>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.name}>{item.first_name} {item.last_name}</Text>
-                  <Text style={styles.email}>{item.email}</Text>
-                  <Text style={styles.contrib}>
-                    {item.contribution_count || item.total || 0} {type === "innovation" ? "innovations" : "papers"}
-                  </Text>
+          renderItem={({ item, index }) => {
+            const count = type === "innovation" ? item.innovation_count : item.research_count;
+            const isBest = type === "innovation" ? item.is_best_innovator : item.is_best_researcher;
+            return (
+              <Card>
+                <View style={styles.row}>
+                  {item.profile?.cover_image_url ? (
+                    <Image source={{ uri: item.profile.cover_image_url }} style={styles.rankImage} />
+                  ) : (
+                    <Text style={styles.rank}>#{index + 1}</Text>
+                  )}
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.name}>{item.first_name} {item.last_name}</Text>
+                    <Text style={styles.email}>{item.email}</Text>
+                    <Text style={styles.contrib}>
+                      {count || 0} {type === "innovation" ? "innovations" : "papers"}
+                    </Text>
+                  </View>
+                  <View style={{ alignItems: "flex-end" }}>
+                    {isBest ? <Badge tone="warning">⭐ Best</Badge> : null}
+                    <Button
+                      title={isBest ? "Remove" : "Mark Best"}
+                      variant={isBest ? "outline" : "primary"}
+                      size="sm"
+                      onPress={() => toggleBest(item.id)}
+                      style={{ marginTop: 6 }}
+                    />
+                  </View>
                 </View>
-                <View style={{ alignItems: "flex-end" }}>
-                  {item.is_best ? <Badge tone="warning">⭐ Best</Badge> : null}
-                  <Button
-                    title={item.is_best ? "Remove" : "Mark Best"}
-                    variant={item.is_best ? "outline" : "primary"}
-                    size="sm"
-                    onPress={() => toggleBest(item.id)}
-                    style={{ marginTop: 6 }}
-                  />
-                </View>
-              </View>
-            </Card>
-          )}
+              </Card>
+            );
+          }}
           contentContainerStyle={{ padding: spacing.md }}
           refreshing={refreshing}
           onRefresh={() => { setRefreshing(true); load(); }}
@@ -106,6 +117,7 @@ const styles = StyleSheet.create({
   tabTextActive: { color: "#fff" },
   row: { flexDirection: "row", alignItems: "center" },
   rank: { fontSize: 18, fontWeight: "800", color: colors.primary, width: 40 },
+  rankImage: { width: 40, height: 40, borderRadius: 20, marginRight: 10 },
   name: { fontSize: 14, fontWeight: "700", color: colors.text },
   email: { fontSize: 11, color: colors.textMuted, marginTop: 2 },
   contrib: { fontSize: 12, color: colors.textMuted, marginTop: 4, fontWeight: "600" },
