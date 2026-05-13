@@ -143,10 +143,23 @@ export default function VideoValidationScreen() {
   const fetchVideos = useCallback(async () => {
     setError("");
     try {
-      let url = "/innovation?show_all=true";
-      if (filterStatus !== "all") url = `/innovation?status=${filterStatus}&show_all=true`;
-      const res = await api.get(url);
-      setVideos(res.data.data.data || []);
+      let allVideos = [];
+      if (filterStatus === "all") {
+        const [pendingRes, activeRes, inactiveRes] = await Promise.all([
+          api.get("/innovation?status=pending&show_all=true"),
+          api.get("/innovation?status=active&show_all=true"),
+          api.get("/innovation?status=inactive&show_all=true"),
+        ]);
+        allVideos = [
+          ...(pendingRes.data.data.data || []),
+          ...(activeRes.data.data.data || []),
+          ...(inactiveRes.data.data.data || []),
+        ];
+      } else {
+        const res = await api.get(`/innovation?status=${filterStatus}&show_all=true`);
+        allVideos = res.data.data.data || [];
+      }
+      setVideos(allVideos);
     } catch (e) {
       setError("Failed to load videos. Pull down to retry.");
     } finally {
