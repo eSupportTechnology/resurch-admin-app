@@ -139,8 +139,11 @@ export default function UserManagementScreen() {
   const load = useCallback(async () => {
     try {
       const res = await usersApi.list({ search, role, status, per_page: 50 });
-      const list = res.data?.data?.data || res.data?.data || [];
-      setUsers(Array.isArray(list) ? list : []);
+      
+      // Fix: Handle direct array response
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data?.data || res.data?.data || []);
+      
+      setUsers(list);
     } catch (e) {
       console.warn(e);
     } finally {

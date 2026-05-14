@@ -30,15 +30,15 @@ export default function MarketingScreen() {
 
   const stats = analytics
     ? [
-        { label: "Total Ads", value: analytics.total_ads || ads.length },
-        { label: "Active", value: analytics.active || 0, color: colors.success },
-        { label: "Pending", value: analytics.pending || 0, color: colors.warning },
-        { label: "Revenue", value: `$${analytics.revenue || 0}`, color: colors.primary },
-      ]
+      { label: "Total Ads", value: analytics.total_ads || ads.length },
+      { label: "Active", value: analytics.active || 0, color: colors.success },
+      { label: "Pending", value: analytics.pending || 0, color: colors.warning },
+      { label: "Revenue", value: `$${analytics.revenue || 0}`, color: colors.primary },
+    ]
     : [
-        { label: "Total Ads", value: ads.length },
-        { label: "Active", value: ads.filter((a) => a.status === "approved").length, color: colors.success },
-      ];
+      { label: "Total Ads", value: ads.length },
+      { label: "Active", value: ads.filter((a) => a.status === "approved").length, color: colors.success },
+    ];
 
   return (
     <Screen scroll={false}>

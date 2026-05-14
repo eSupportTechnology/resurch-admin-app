@@ -50,19 +50,23 @@ function ReviewCard({ item, onDelete }) {
     );
   };
 
+  // Extract name and email from response structure
+  const userName = item.author || `${item.user?.first_name || ""} ${item.user?.last_name || ""}`.trim() || "Unknown";
+  const userEmail = item.author_email || item.user?.email || "";
+  const innovationTitle = item.innovation_title || item.innovation?.title || "";
+  const commentText = item.text || item.comment || "";
+
   return (
     <View style={styles.card}>
       <View style={styles.cardHeader}>
         <View style={styles.avatar}>
           <Text style={styles.avatarText}>
-            {(item.user?.first_name || item.reviewer || "?")[0].toUpperCase()}
+            {userName[0].toUpperCase()}
           </Text>
         </View>
         <View style={styles.userInfo}>
-          <Text style={styles.userName}>
-            {item.user?.first_name} {item.user?.last_name}
-          </Text>
-          <Text style={styles.userEmail}>{item.user?.email || ""}</Text>
+          <Text style={styles.userName}>{userName}</Text>
+          <Text style={styles.userEmail}>{userEmail}</Text>
         </View>
         <TouchableOpacity
           style={[styles.deleteBtn, deleting && styles.deleteBtnDisabled]}
@@ -77,10 +81,10 @@ function ReviewCard({ item, onDelete }) {
         </TouchableOpacity>
       </View>
 
-      {item.innovation ? (
+      {innovationTitle ? (
         <View style={styles.subjectRow}>
           <Text style={styles.subjectLabel}>Innovation: </Text>
-          <Text style={styles.subjectValue} numberOfLines={1}>{item.innovation.title}</Text>
+          <Text style={styles.subjectValue} numberOfLines={1}>{innovationTitle}</Text>
         </View>
       ) : null}
 
@@ -89,8 +93,8 @@ function ReviewCard({ item, onDelete }) {
         <Text style={styles.ratingValue}>{item.rating}/5</Text>
       </View>
 
-      {item.comment ? (
-        <Text style={styles.comment}>{item.comment}</Text>
+      {commentText ? (
+        <Text style={styles.comment}>{commentText}</Text>
       ) : null}
 
       <Text style={styles.date}>
@@ -115,10 +119,15 @@ export default function InnovationReviewScreen() {
     setError("");
     try {
       const res = await api.get(`/admin/innovation-comments?page=${page}&search=${search}`);
-      const data = res.data.data.data;
-      setTotalPages(res.data.data.last_page);
+      
+      // Handle different response structures robustly
+      const data = Array.isArray(res.data) ? res.data : (res.data?.data?.data || res.data?.data || []);
+      const totalPages = res.data?.data?.last_page || 1;
+      
+      setTotalPages(totalPages);
       setComments((prev) => (replace ? data : [...prev, ...data]));
     } catch (e) {
+      console.warn("Fetch comments error:", e);
       setError("Failed to load reviews. Pull down to retry.");
     } finally {
       setLoading(false);

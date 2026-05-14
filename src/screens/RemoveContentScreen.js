@@ -1,5 +1,5 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, FlatList, Alert, TouchableOpacity, Image, Linking } from "react-native";
 import { Screen, Card, Button, Input, Badge, EmptyState } from "../components/ui";
 import { removeContentApi } from "../api/endpoints";
 import { colors, spacing } from "../theme/colors";
@@ -21,10 +21,12 @@ export default function RemoveContentScreen() {
   const load = useCallback(async () => {
     try {
       const res = await removeContentApi.list(type.endpoint, { search, show_all: true, per_page: 50 });
-      const list = res.data?.data?.data || res.data?.data || [];
-      setItems(Array.isArray(list) ? list : []);
+      
+      // Handle different response structures robustly
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data?.data || res.data?.data || res.data || []);
+      setItems(list);
     } catch (e) {
-      console.warn(e);
+      console.warn("Remove content fetch error:", e);
     } finally {
       setLoading(false);
       setRefreshing(false);
@@ -84,15 +86,30 @@ export default function RemoveContentScreen() {
           keyExtractor={(it) => String(it.id)}
           renderItem={({ item }) => (
             <Card>
-              <Text style={styles.title} numberOfLines={2}>
-                {item.title || item.content?.slice(0, 80) || `Item #${item.id}`}
-              </Text>
-              {item.user || item.author ? (
-                <Text style={styles.sub}>By {item.user?.email || item.author?.email || "—"}</Text>
-              ) : null}
-              {item.created_at ? (
-                <Text style={styles.date}>{new Date(item.created_at).toLocaleString()}</Text>
-              ) : null}
+              <View style={{ flexDirection: "row", gap: spacing.sm }}>
+                {(item.thumbnail || item.image_url || item.media_path) ? (
+                  <Image 
+                    source={{ uri: item.thumbnail || item.image_url || item.media_path }} 
+                    style={styles.thumbnail} 
+                  />
+                ) : null}
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.title} numberOfLines={2}>
+                    {item.title || item.content?.slice(0, 80) || `Item #${item.id}`}
+                  </Text>
+                  {item.user || item.author ? (
+                    <Text style={styles.sub}>By {item.user?.email || item.author?.email || "—"}</Text>
+                  ) : null}
+                  {item.created_at ? (
+                    <Text style={styles.date}>{new Date(item.created_at).toLocaleString()}</Text>
+                  ) : null}
+                  {item.document_url ? (
+                    <TouchableOpacity onPress={() => Linking.openURL(item.document_url)}>
+                      <Text style={styles.docLink}>📄 View Document</Text>
+                    </TouchableOpacity>
+                  ) : null}
+                </View>
+              </View>
               <Button
                 title="🗑 Remove"
                 variant="danger"
@@ -123,6 +140,8 @@ const styles = StyleSheet.create({
   tabText: { fontSize: 12, fontWeight: "700", color: colors.textMuted },
   tabTextActive: { color: "#fff" },
   title: { fontSize: 14, fontWeight: "700", color: colors.text },
+  thumbnail: { width: 60, height: 60, borderRadius: 8 },
+  docLink: { fontSize: 12, color: colors.primary, marginTop: 4, fontWeight: "600" },
   sub: { fontSize: 12, color: colors.textMuted, marginTop: 4 },
   date: { fontSize: 11, color: colors.textLight, marginTop: 4 },
 });

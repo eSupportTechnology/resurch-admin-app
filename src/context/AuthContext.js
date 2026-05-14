@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useMemo } from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import api from "../api/api";
+import api, { setOnAuthError } from "../api/api";
 
 const AuthContext = createContext(null);
 
@@ -18,6 +18,9 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     restoreSession();
+    setOnAuthError(() => {
+      logout();
+    });
   }, []);
 
   const restoreSession = async () => {

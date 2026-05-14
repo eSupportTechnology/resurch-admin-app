@@ -15,12 +15,12 @@ import {
 } from "react-native";
 import api from "../api/api";
 
-const STATUS_FILTERS = ["all", "pending", "approved", "rejected"];
+const STATUS_FILTERS = ["all", "pending", "active", "inactive"];
 
 const STATUS_COLORS = {
   pending:  { bg: "#fef3c7", text: "#92400e", dot: "#f59e0b" },
-  approved: { bg: "#d1fae5", text: "#065f46", dot: "#22c55e" },
-  rejected: { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444" },
+  active:   { bg: "#d1fae5", text: "#065f46", dot: "#22c55e" },
+  inactive: { bg: "#fee2e2", text: "#991b1b", dot: "#ef4444" },
 };
 
 function StatusBadge({ status }) {
@@ -39,11 +39,15 @@ function VideoDetailModal({ visible, video, onClose, onStatusChange }) {
   const handleStatus = async (newStatus) => {
     setUpdating(true);
     try {
-      await api.patch(`/innovations/${video.id}/status`, { status: newStatus });
+      console.log(`Attempting to update status for video ${video.id} to ${newStatus}`);
+      const res = await api.patch(`/innovations/${video.id}/status`, { status: newStatus });
+      console.log("Status update response:", JSON.stringify(res.data, null, 2));
+      
       onStatusChange(video.id, newStatus);
       onClose();
     } catch (e) {
-      Alert.alert("Error", "Failed to update status. Please try again.");
+      console.warn("Status update error:", JSON.stringify(e.response?.data || e, null, 2));
+      Alert.alert("Error", e.response?.data?.message || "Failed to update status. Please try again.");
     } finally {
       setUpdating(false);
     }
@@ -107,15 +111,15 @@ function VideoDetailModal({ visible, video, onClose, onStatusChange }) {
           <View style={modal.actionRow}>
             <TouchableOpacity
               style={[modal.actionBtn, modal.approveBtn, updating && modal.disabledBtn]}
-              onPress={() => handleStatus("approved")}
-              disabled={updating || video.status === "approved"}
+              onPress={() => handleStatus("active")}
+              disabled={updating || video.status === "active"}
             >
               {updating ? <ActivityIndicator color="#fff" size="small" /> : <Text style={modal.actionBtnText}>Approve</Text>}
             </TouchableOpacity>
             <TouchableOpacity
               style={[modal.actionBtn, modal.rejectBtn, updating && modal.disabledBtn]}
-              onPress={() => handleStatus("rejected")}
-              disabled={updating || video.status === "rejected"}
+              onPress={() => handleStatus("inactive")}
+              disabled={updating || video.status === "inactive"}
             >
               <Text style={modal.actionBtnText}>Reject</Text>
             </TouchableOpacity>
@@ -139,10 +143,23 @@ export default function VideoValidationScreen() {
   const fetchVideos = useCallback(async () => {
     setError("");
     try {
-      let url = "/innovation?show_all=true";
-      if (filterStatus !== "all") url = `/innovation?status=${filterStatus}&show_all=true`;
-      const res = await api.get(url);
-      setVideos(res.data.data.data || []);
+      let allVideos = [];
+      if (filterStatus === "all") {
+        const [pendingRes, activeRes, inactiveRes] = await Promise.all([
+          api.get("/innovation?status=pending&show_all=true"),
+          api.get("/innovation?status=active&show_all=true"),
+          api.get("/innovation?status=inactive&show_all=true"),
+        ]);
+        allVideos = [
+          ...(pendingRes.data.data.data || []),
+          ...(activeRes.data.data.data || []),
+          ...(inactiveRes.data.data.data || []),
+        ];
+      } else {
+        const res = await api.get(`/innovation?status=${filterStatus}&show_all=true`);
+        allVideos = res.data.data.data || [];
+      }
+      setVideos(allVideos);
     } catch (e) {
       setError("Failed to load videos. Pull down to retry.");
     } finally {

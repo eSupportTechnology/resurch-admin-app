@@ -38,7 +38,7 @@ function AdminCard({ admin, onToggle, onEdit, onDelete }) {
 }
 
 function FormModal({ visible, onClose, onSave, admin }) {
-  const [form, setForm] = useState({ first_name: "", last_name: "", email: "", role: "Admin", password: "" });
+  const [form, setForm] = useState({ first_name: "", last_name: "", email: "", role: "admin", password: "" });
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
@@ -47,11 +47,11 @@ function FormModal({ visible, onClose, onSave, admin }) {
         first_name: admin.first_name || "",
         last_name: admin.last_name || "",
         email: admin.email || "",
-        role: admin.role || "Admin",
+        role: admin.role || "admin",
         password: "",
       });
     } else {
-      setForm({ first_name: "", last_name: "", email: "", role: "Admin", password: "" });
+      setForm({ first_name: "", last_name: "", email: "", role: "admin", password: "" });
     }
   }, [admin, visible]);
 
@@ -87,9 +87,9 @@ function FormModal({ visible, onClose, onSave, admin }) {
         value={form.role}
         onValueChange={(v) => setForm({ ...form, role: v })}
         options={[
-          { label: "Admin", value: "Admin" },
-          { label: "Manager", value: "Manager" },
-          { label: "Marketing", value: "Marketing" },
+          { label: "Admin", value: "admin" },
+          { label: "Manager", value: "manager" },
+          { label: "Marketing", value: "marketing" },
         ]}
       />
       <Input
@@ -113,8 +113,8 @@ export default function AdminManagementScreen() {
   const load = useCallback(async () => {
     try {
       const res = await usersApi.list({ search, per_page: 100 });
-      const list = res.data?.data?.data || res.data?.data || [];
-      setAdmins(list.filter((u) => ADMIN_ROLES.includes(u.role)));
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data?.data || res.data?.data || []);
+      setAdmins(list.filter((u) => u.role && ADMIN_ROLES.map(r => r.toLowerCase()).includes(u.role.toLowerCase())));
     } catch (e) {
       console.warn(e);
     } finally {

@@ -16,7 +16,8 @@ export default function BlockedUsersScreen() {
   const load = useCallback(async () => {
     try {
       const res = await usersApi.list({ search, per_page: 100 });
-      const list = res.data?.data?.data || res.data?.data || [];
+
+      const list = Array.isArray(res.data) ? res.data : (res.data?.data?.data || res.data?.data || []);
       const blocked = list.filter((u) => (u.status || "").toLowerCase() === "inactive");
       setUsers(blocked);
     } catch (e) {
