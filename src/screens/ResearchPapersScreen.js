@@ -151,10 +151,23 @@ export default function ResearchPapersScreen() {
   const fetchResearches = useCallback(async () => {
     setError("");
     try {
-      let url = "/research";
-      if (filterStatus !== "all") url = `/research?status=${filterStatus}`;
-      const res = await api.get(url);
-      setResearches(res.data.data.data || []);
+      let allResearches = [];
+      if (filterStatus === "all") {
+        const [pendingRes, approvedRes, rejectedRes] = await Promise.all([
+          api.get("/research?status=pending"),
+          api.get("/research?status=approved"),
+          api.get("/research?status=rejected"),
+        ]);
+        allResearches = [
+          ...(pendingRes.data.data.data || []),
+          ...(approvedRes.data.data.data || []),
+          ...(rejectedRes.data.data.data || []),
+        ];
+      } else {
+        const res = await api.get(`/research?status=${filterStatus}`);
+        allResearches = res.data.data.data || [];
+      }
+      setResearches(allResearches);
     } catch (e) {
       setError("Failed to load research papers. Pull down to retry.");
     } finally {

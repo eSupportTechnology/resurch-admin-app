@@ -107,9 +107,12 @@ export const videoUploadApi = {
   updateFee: (payload) => api.put("/super-admin/video-upload-fee", payload),
 };
 
+const TOGGLE_BEST_TYPE_MAP = { research: "researcher", innovation: "innovator" };
+
 export const leaderboardApi = {
   byContribution: (type) => api.get(`/super-admin/users-by-contribution?type=${type}`),
-  toggleBest: (userId, type) => api.post(`/super-admin/users/${userId}/toggle-best`, { type }),
+  toggleBest: (userId, type) =>
+    api.post(`/super-admin/users/${userId}/toggle-best`, { type: TOGGLE_BEST_TYPE_MAP[type] ?? type }),
 };
 
 export const hubCardsApi = {
